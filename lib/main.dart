@@ -6,117 +6,352 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      debugShowCheckedModeBanner: false, // Removes debug banner
+      title: 'Flutter Cart Demo',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: CartPage(initialCartItems: {}),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class CartPage extends StatefulWidget {
+  final Map<int, int> initialCartItems; // productId: quantity
+  const CartPage({super.key, required this.initialCartItems});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<CartPage> createState() => _CartPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _CartPageState extends State<CartPage> {
+  late Map<int, int> cartItems;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  final List<Map<String, dynamic>> productList = List.generate(
+    20,
+    (index) => {
+      'name': 'Product ${index + 1}',
+      'price': (index + 1) * 20,
+      'imageColor': Colors.blue[(index + 1) * 100] ?? Colors.blue,
+    },
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    cartItems = Map<int, int>.from(widget.initialCartItems);
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    double total = cartItems.entries.fold(
+      0,
+      (sum, entry) =>
+          sum + (productList[entry.key]['price'] as int) * entry.value,
+    );
+
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: const Text("Your Cart"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.clear_all),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder:
+                    (context) => AlertDialog(
+                      title: const Text("Clear Cart"),
+                      content: const Text(
+                        "Are you sure you want to clear the cart?",
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("Cancel"),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            setState(() => cartItems.clear());
+                            Navigator.pop(context);
+                          },
+                          child: const Text("Clear"),
+                        ),
+                      ],
+                    ),
+              );
+            },
+          ),
+        ],
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+      body:
+          cartItems.isEmpty
+              ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.shopping_cart,
+                      size: 100,
+                      color: Colors.grey,
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      "Your cart is empty!",
+                      style: TextStyle(fontSize: 18, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (_) => HomePage(
+                                  onAddToCart: (index) {
+                                    setState(() {
+                                      cartItems.update(
+                                        index,
+                                        (q) => q + 1,
+                                        ifAbsent: () => 1,
+                                      );
+                                    });
+                                  },
+                                ),
+                          ),
+                        );
+                      },
+                      child: const Text("Start Shopping"),
+                    ),
+                  ],
+                ),
+              )
+              : Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: cartItems.length,
+                      itemBuilder: (context, i) {
+                        final entry = cartItems.entries.toList()[i];
+                        final productId = entry.key;
+                        final quantity = entry.value;
+                        final product = productList[productId];
+                        final price = product['price'] as int;
+
+                        return Card(
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 8,
+                            horizontal: 12,
+                          ),
+                          elevation: 4,
+                          child: ListTile(
+                            leading: Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: product['imageColor'] as Color,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  (product['name'] as String).substring(0, 1),
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            title: Text(product['name'] as String),
+                            subtitle: Text(
+                              "Price: \$$price x $quantity = \$${price * quantity}",
+                            ),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder:
+                                      (context) => AlertDialog(
+                                        title: const Text("Remove Item"),
+                                        content: const Text(
+                                          "Are you sure you want to remove this item?",
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed:
+                                                () => Navigator.pop(context),
+                                            child: const Text("Cancel"),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              setState(
+                                                () =>
+                                                    cartItems.remove(productId),
+                                              );
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text("Remove"),
+                                          ),
+                                        ],
+                                      ),
+                                );
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        Text(
+                          "Total: \$${total.toStringAsFixed(2)}",
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (_) => CheckoutPage(
+                                      total: total,
+                                      cartItems: cartItems,
+                                    ),
+                              ),
+                            );
+                          },
+                          child: const Text("Proceed to Checkout"),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+    );
+  }
+}
+
+class CheckoutPage extends StatelessWidget {
+  final double total;
+  final Map<int, int> cartItems;
+
+  const CheckoutPage({super.key, required this.total, required this.cartItems});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Checkout")),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Your Cart Items:",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            ...cartItems.entries.map((entry) {
+              final productId = entry.key;
+              final quantity = entry.value;
+              final product = {
+                'name': 'Product ${productId + 1}',
+                'price': (productId + 1) * 20,
+                'imageColor': Colors.blue[(productId + 1) * 100] ?? Colors.blue,
+              };
+              final price = product['price'] as int;
+
+              return ListTile(
+                leading: Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: product['imageColor'] as Color,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: Text(
+                      (product['name'] as String).substring(0, 1),
+                      style: const TextStyle(fontSize: 20, color: Colors.white),
+                    ),
+                  ),
+                ),
+                title: Text(product['name'] as String),
+                subtitle: Text(
+                  "Price: \$$price x $quantity = \$${price * quantity}",
+                ),
+              );
+            }),
+            const SizedBox(height: 20),
             Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+              "Total: \$${total.toStringAsFixed(2)}",
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder:
+                      (context) => AlertDialog(
+                        title: const Text("Order Completed"),
+                        content: const Text("Thank you for your purchase!"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                            },
+                            child: const Text("OK"),
+                          ),
+                        ],
+                      ),
+                );
+              },
+              child: const Text("Complete Purchase"),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  final void Function(int) onAddToCart;
+  const HomePage({super.key, required this.onAddToCart});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Shop")),
+      body: ListView.builder(
+        itemCount: 20,
+        itemBuilder: (context, index) {
+          final productName = "Product ${index + 1}";
+          final price = (index + 1) * 20;
+          return ListTile(
+            title: Text(productName),
+            subtitle: Text("Price: \$$price"),
+            trailing: IconButton(
+              icon: const Icon(Icons.add_shopping_cart),
+              onPressed: () {
+                onAddToCart(index);
+                Navigator.pop(context);
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 }
