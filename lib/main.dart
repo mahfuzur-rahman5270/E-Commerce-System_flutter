@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false, // Removes debug banner
-      title: 'Flutter Cart Demo',
+      title: 'Cart Page',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: CartPage(initialCartItems: {}),
     );
