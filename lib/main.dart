@@ -5,6 +5,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -24,8 +26,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+
   final List<String> categoryNames = ['Men', 'Women', 'Children', 'Electronics', 'Accessories'];
   late final List<Map<String, dynamic>> _products;
 
@@ -33,31 +36,31 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _products = [
-      {'name': 'Polo T-Shirt', 'price': 25, 'image': Icons.checkroom, 'category': 'Men'},
-      {'name': 'Slim Fit Jeans', 'price': 40, 'image': Icons.checkroom, 'category': 'Men'},
-      {'name': 'Leather Jacket', 'price': 100, 'image': Icons.checkroom, 'category': 'Men'},
-      {'name': 'Formal Shirt', 'price': 35, 'image': Icons.checkroom, 'category': 'Men'},
-      {'name': 'Sports Shoes', 'price': 70, 'image': Icons.directions_run, 'category': 'Men'},
-      {'name': 'Cotton Saree', 'price': 30, 'image': Icons.checkroom, 'category': 'Women'},
-      {'name': 'Anarkali Dress', 'price': 60, 'image': Icons.checkroom, 'category': 'Women'},
-      {'name': 'Handbag', 'price': 45, 'image': Icons.shopping_bag, 'category': 'Women'},
-      {'name': 'Heels', 'price': 55, 'image': Icons.directions_walk, 'category': 'Women'},
-      {'name': 'Skincare Set', 'price': 40, 'image': Icons.face, 'category': 'Women'},
-      {'name': 'Kids T-Shirt', 'price': 15, 'image': Icons.child_care, 'category': 'Children'},
-      {'name': 'Toy Car', 'price': 20, 'image': Icons.toys, 'category': 'Children'},
-      {'name': 'School Bag', 'price': 25, 'image': Icons.backpack, 'category': 'Children'},
-      {'name': 'Coloring Book', 'price': 10, 'image': Icons.book, 'category': 'Children'},
-      {'name': 'Baby Shoes', 'price': 18, 'image': Icons.child_friendly, 'category': 'Children'},
-      {'name': 'Bluetooth Speaker', 'price': 60, 'image': Icons.speaker, 'category': 'Electronics'},
-      {'name': 'Laptop', 'price': 600, 'image': Icons.laptop, 'category': 'Electronics'},
-      {'name': 'Smartphone', 'price': 400, 'image': Icons.smartphone, 'category': 'Electronics'},
-      {'name': 'Smartwatch', 'price': 150, 'image': Icons.watch, 'category': 'Electronics'},
-      {'name': 'Headphones', 'price': 80, 'image': Icons.headphones, 'category': 'Electronics'},
-      {'name': 'Sunglasses', 'price': 25, 'image': Icons.remove_red_eye, 'category': 'Accessories'},
-      {'name': 'Leather Wallet', 'price': 30, 'image': Icons.account_balance_wallet, 'category': 'Accessories'},
-      {'name': 'Belt', 'price': 20, 'image': Icons.linear_scale, 'category': 'Accessories'},
-      {'name': 'Watch', 'price': 50, 'image': Icons.watch_later, 'category': 'Accessories'},
-      {'name': 'Cap', 'price': 15, 'image': Icons.emoji_people, 'category': 'Accessories'},
+      {'name': 'Polo T-Shirt', 'price': 25, 'image': 'assets/images/product1.jpg', 'category': 'Men'},
+      {'name': 'Slim Fit Jeans', 'price': 40, 'image': 'assets/images/product2.jpg', 'category': 'Men'},
+      {'name': 'Leather Jacket', 'price': 100, 'image': 'assets/images/product3.jpg', 'category': 'Men'},
+      {'name': 'Formal Shirt', 'price': 35, 'image': 'assets/images/product4.jpg', 'category': 'Men'},
+      {'name': 'Sports Shoes', 'price': 70, 'image': 'assets/images/product5.jpg', 'category': 'Men'},
+      {'name': 'Cotton Saree', 'price': 30, 'image': 'assets/images/product6.jpg', 'category': 'Women'},
+      {'name': 'Anarkali Dress', 'price': 60, 'image': 'assets/images/product7.jpg', 'category': 'Women'},
+      {'name': 'Handbag', 'price': 45, 'image': 'assets/images/product8.jpg', 'category': 'Women'},
+      {'name': 'Heels', 'price': 55, 'image': 'assets/images/product9.jpg', 'category': 'Women'},
+      {'name': 'Skincare Set', 'price': 40, 'image': 'assets/images/product10.jpg', 'category': 'Women'},
+      {'name': 'Kids T-Shirt', 'price': 15, 'image': 'assets/images/product11.jpg', 'category': 'Children'},
+      {'name': 'Toy Car', 'price': 20, 'image': 'assets/images/product12.jpg', 'category': 'Children'},
+      {'name': 'School Bag', 'price': 25, 'image': 'assets/images/product13.jpg', 'category': 'Children'},
+      {'name': 'Coloring Book', 'price': 10, 'image': 'assets/images/product14.jpg', 'category': 'Children'},
+      {'name': 'Baby Shoes', 'price': 18, 'image': 'assets/images/product15.jpg', 'category': 'Children'},
+      {'name': 'Bluetooth Speaker', 'price': 60, 'image': 'assets/images/product16.jpg', 'category': 'Electronics'},
+      {'name': 'Laptop', 'price': 600, 'image': 'assets/images/product17.jpg', 'category': 'Electronics'},
+      {'name': 'Smartphone', 'price': 400, 'image': 'assets/images/product18.jpg', 'category': 'Electronics'},
+      {'name': 'Smartwatch', 'price': 150, 'image': 'assets/images/product19.jpg', 'category': 'Electronics'},
+      {'name': 'Headphones', 'price': 80, 'image': 'assets/images/product20.jpg', 'category': 'Electronics'},
+      {'name': 'Sunglasses', 'price': 25, 'image': 'assets/images/product21.jpg', 'category': 'Accessories'},
+      {'name': 'Leather Wallet', 'price': 30, 'image': 'assets/images/product22.jpg', 'category': 'Accessories'},
+      {'name': 'Belt', 'price': 20, 'image': 'assets/images/product23.jpg', 'category': 'Accessories'},
+      {'name': 'Watch', 'price': 50, 'image': 'assets/images/product24.jpg', 'category': 'Accessories'},
+      {'name': 'Cap', 'price': 15, 'image': 'assets/images/product25.jpg', 'category': 'Accessories'},
     ];
   }
 
@@ -150,7 +153,16 @@ class _HomePageState extends State<HomePage> {
                                 color: Colors.deepPurple.shade200,
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: Icon(product['image'], size: 40, color: Colors.white),
+                              child: product['image'] is String
+                                  ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.asset(
+                                        product['image'],
+                                        fit: BoxFit.cover,
+                                        width: 10,
+                                      ),
+                                    )
+                                  : Icon(product['image'], size: 10, color: Colors.white),
                             ),
                           ),
                           const SizedBox(height: 6),
@@ -225,7 +237,16 @@ class CategoryProductsPage extends StatelessWidget {
                           color: Colors.deepPurple.shade200,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Icon(product['image'], size: 40, color: Colors.white),
+                        child: product['image'] is String
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.asset(
+                                  product['image'],
+                                  fit: BoxFit.cover,
+                                  width: 10,
+                                ),
+                              )
+                            : Icon(product['image'], size: 10, color: Colors.white),
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -268,7 +289,16 @@ class ProductDetailsPage extends StatelessWidget {
                 color: Colors.deepPurple.shade100,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Center(child: Icon(product['image'], size: 60, color: Colors.white)),
+              child: product['image'] is String
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.asset(
+                        product['image'],
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                      ),
+                    )
+                  : Icon(product['image'], size: 10, color: Colors.white),
             ),
             const SizedBox(height: 20),
             Text(product['name'], style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
@@ -284,42 +314,14 @@ class ProductDetailsPage extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  onAddToCart(index); // Add to the cart
-                  Navigator.pop(context); // Close the current page (ProductDetailsPage)
-                  
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => CartPage(initialCartItems: [index]), // Pass the updated cart
-                    ),
-                  );
+                  onAddToCart(index);
+                  Navigator.pop(context);
                 },
                 child: const Text("Add to Cart"),
               ),
             )
           ],
         ),
-      ),
-    );
-  }
-}
-
-class CartPage extends StatelessWidget {
-  final List<int> initialCartItems;
-  const CartPage({super.key, required this.initialCartItems});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Cart")),
-      body: ListView.builder(
-        itemCount: initialCartItems.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text("Product #${initialCartItems[index]}"),
-          );
-        },
       ),
     );
   }
